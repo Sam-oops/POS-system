@@ -1,0 +1,5 @@
+# Express middleware lives here:
+#   auth.ts        — verify JWT, attach req.auth = { userId, tenantId, role }
+#   tenantScope.ts — guarantee every data query is filtered by tenantId
+#   requireRole.ts — guard admin-only routes
+#   errorHandler.ts

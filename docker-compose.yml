@@ -1,0 +1,75 @@
+services:
+  mongo:
+    image: mongo:7
+    # Single-node replica set — required so MongoDB multi-document transactions
+    # are available for Stage 4 (atomic order + stock decrement). The conditional
+    # $inc guard works without it too; the replica set just keeps both options open.
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # One-shot init: turns the running mongod into an initialized replica set.
+  # Idempotent — re-running `docker compose up` just sees it already initialized.
+  mongo-init:
+    image: mongo:7
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: "no"
+    entrypoint:
+      - bash
+      - -c
+      - |
+        mongosh --host mongo:27017 --quiet --eval '
+          try {
+            rs.status();
+            print("replica set already initialized");
+          } catch (e) {
+            rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "mongo:27017" }] });
+            print("replica set initiated");
+          }
+        '
+
+  backend:
+    build: ./backend
+    depends_on:
+      mongo:
+        condition: service_healthy
+      mongo-init:
+        condition: service_completed_successfully
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      # MONGO_URI is forced here (not from .env) so it always points at the
+      # `mongo` service over the compose network with the replica set name.
+      - MONGO_URI=mongodb://mongo:27017/bito?replicaSet=rs0
+      - JWT_SECRET=${JWT_SECRET:-dev_jwt_secret_change_me}
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:-dev_webhook_secret_change_me}
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    environment:
+      # Vite dev server proxies /api to the backend container.
+      - VITE_PROXY_TARGET=http://backend:4000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  mongo-data:
