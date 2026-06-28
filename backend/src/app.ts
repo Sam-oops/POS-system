@@ -1,4 +1,5 @@
 import express from 'express';
+import authRouter from './routes/auth';
 
 export const app = express();
 
@@ -14,7 +15,7 @@ app.get('/health', (_req, res) => {
 });
 
 // Stage routers get mounted here as we build them:
-//   app.use('/api/auth', authRouter);        // Stage 1
+app.use('/api/auth', authRouter); // Stage 1
 //   app.use('/api/products', productRouter);  // Stage 2
 //   app.use('/api/orders', orderRouter);      // Stage 4
 //   app.use('/api/webhooks', webhookRouter);  // Stage 5
