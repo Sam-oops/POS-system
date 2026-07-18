@@ -1,5 +1,0 @@
-# Mongoose schemas live here. You write these:
-#   Stage 0: tenant.ts, user.ts
-#   Stage 2: product.ts (+ category.ts for the N+1 example)
-#   Stage 4: order.ts
-#   Stage 5: paymentEvent.ts
