@@ -11,6 +11,11 @@ router.post("/login", async (req, res) => {
   const { tenantSlug, email, password } = req.body;
   const token = await login(tenantSlug, email, password);
   if (!token) return res.status(401).json({ error: "Invalid credentials" });
+  res.cookie("token", token, {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 15 * 60 * 1000,
+  });
   return res.json({ token });
 });
 export default router;

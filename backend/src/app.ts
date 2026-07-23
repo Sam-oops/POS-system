@@ -3,10 +3,12 @@ import authRouter from "./routes/auth";
 import productRouter from "./routes/products";
 import orderRouter from "./routes/orders";
 import { errorHandler } from "./middleware/errors";
+import cookieParser from "cookie-parser";
 
 export const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
