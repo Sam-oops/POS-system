@@ -1,8 +1,13 @@
+import { useSessionStore } from "./entities/session/model/sessionStore";
+import { LoginForm } from "./features/auth/ui/LoginForm";
+import { CatalogPage } from "./pages/catalog/CatalogPage";
+
 export function App() {
-  return (
-    <div style={{ fontFamily: 'system-ui', padding: 24 }}>
-      <h1>BITO POS</h1>
-      <p>Frontend skeleton is running. Screens get built per stage.</p>
-    </div>
-  );
+  const token = useSessionStore((state) => state.token);
+
+  if (!token) {
+    return <LoginForm />;
+  }
+
+  return <CatalogPage />;
 }
