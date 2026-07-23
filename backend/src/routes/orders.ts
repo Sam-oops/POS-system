@@ -1,15 +1,20 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth";
-import { listProducts } from "../services/productService";
 import { asyncHandler } from "../middleware/errors";
+import { createOrder } from "../services/orderService";
 
 const router = Router();
-router.get(
+
+router.post(
   "/",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const products = await listProducts(req.auth!.tenantId, req.auth!.role);
-    res.json(products);
+    const order = await createOrder(
+      req.auth!.tenantId,
+      req.auth!.userId,
+      req.body.items,
+    );
+    res.status(201).json(order);
   }),
 );
 
