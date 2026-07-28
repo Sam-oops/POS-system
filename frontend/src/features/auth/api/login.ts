@@ -7,7 +7,7 @@ interface LoginParams {
 }
 
 export function login(params: LoginParams) {
-  return apiFetch<{ token: string }>("/auth/login", {
+  return apiFetch<void>("/auth/login", {
     method: "POST",
     body: JSON.stringify(params),
   });

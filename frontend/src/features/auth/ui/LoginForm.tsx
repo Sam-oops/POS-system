@@ -1,19 +1,17 @@
 import { useState } from "react";
-import { useSessionStore } from "../../../entities/session/model/sessionStore";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { login } from "../api/login";
 
 export function LoginForm() {
   const [tenantSlug, setTenantSlug] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const setToken = useSessionStore((state) => state.setToken);
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: login,
-    onSuccess: (data) => {
-      console.log("onSuccess сработал:", data);
-      setToken(data.token);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 
