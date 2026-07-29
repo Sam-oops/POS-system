@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { LoginForm } from "./features/auth/ui/LoginForm";
 import { CatalogPage } from "./pages/catalog/CatalogPage";
 import { getMe } from "./entities/session/api/getMe";
+import { CartSummary } from "./entities/cart/ui/CartSummary";
 
 export function App() {
   const { data: user, isLoading } = useQuery({
@@ -16,5 +17,10 @@ export function App() {
     return <LoginForm />;
   }
 
-  return <CatalogPage />;
+  return (
+    <>
+      <CatalogPage />
+      <CartSummary />
+    </>
+  );
 }
