@@ -21,18 +21,22 @@ export function CatalogPage() {
       {products!.map((product) => (
         <li key={product._id}>
           {product.name} - {product.price} ({product.categoryId.name})
-          <button
-            onClick={() =>
-              addItem({
-                productId: product._id,
-                name: product.name,
-                price: product.price,
-                quantity: 1,
-              })
-            }
-          >
-            В корзину
-          </button>
+          {product.stock === 0 ? (
+            <span>Нет в наличии</span>
+          ) : (
+            <button
+              onClick={() =>
+                addItem({
+                  productId: product._id,
+                  name: product.name,
+                  price: product.price,
+                  quantity: 1,
+                })
+              }
+            >
+              В корзину
+            </button>
+          )}
         </li>
       ))}
     </ul>
