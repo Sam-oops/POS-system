@@ -57,3 +57,7 @@ export async function createOrder(
   session.endSession();
   return order;
 }
+
+export async function listOrders(tenantId: string, createdBy: string) {
+  return OrderModel.find({ tenantId, createdBy }).sort({ createdAt: -1 });
+}

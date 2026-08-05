@@ -3,6 +3,8 @@ import { LoginForm } from "./features/auth/ui/LoginForm";
 import { CatalogPage } from "./pages/catalog/CatalogPage";
 import { getMe } from "./entities/session/api/getMe";
 import { CartSummary } from "./entities/cart/ui/CartSummary";
+import { OrderList } from "./widgets/orders/OrderList";
+import { SalesReport } from "./widgets/report/SalesReport";
 
 export function App() {
   const { data: user, isLoading } = useQuery({
@@ -21,6 +23,8 @@ export function App() {
     <>
       <CatalogPage />
       <CartSummary />
+      <OrderList />
+      {user.role === "admin" && <SalesReport />}
     </>
   );
 }
