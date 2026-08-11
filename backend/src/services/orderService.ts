@@ -8,6 +8,9 @@ export async function createOrder(
   createdBy: string,
   items: { productId: string; quantity: number }[],
 ) {
+  if (items.length === 0) {
+    throw new HttpError(400, "Order must contain at least one item");
+  }
   const session = await mongoose.startSession();
   let order;
 
@@ -53,4 +56,8 @@ export async function createOrder(
 
   session.endSession();
   return order;
+}
+
+export async function listOrders(tenantId: string, createdBy: string) {
+  return OrderModel.find({ tenantId, createdBy }).sort({ createdAt: -1 });
 }

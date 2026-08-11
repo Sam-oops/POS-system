@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../middleware/errors";
-import { createOrder } from "../services/orderService";
+import { createOrder, listOrders } from "../services/orderService";
 
 const router = Router();
 
@@ -15,6 +15,15 @@ router.post(
       req.body.items,
     );
     res.status(201).json(order);
+  }),
+);
+
+router.get(
+  "/",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const orders = await listOrders(req.auth!.tenantId, req.auth!.userId);
+    res.json(orders);
   }),
 );
 
