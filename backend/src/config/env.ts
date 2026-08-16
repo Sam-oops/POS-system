@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config";
 
 function required(name: string): string {
   const value = process.env[name];
@@ -9,9 +9,10 @@ function required(name: string): string {
 }
 
 export const env = {
-  nodeEnv: process.env.NODE_ENV ?? 'development',
+  nodeEnv: process.env.NODE_ENV ?? "development",
   port: Number(process.env.PORT ?? 4000),
-  mongoUri: required('MONGO_URI'),
-  jwtSecret: required('JWT_SECRET'),
-  webhookSecret: required('WEBHOOK_SECRET'),
+  mongoUri: required("MONGO_URI"),
+  jwtSecret: required("JWT_SECRET"),
+  webhookSecret: required("WEBHOOK_SECRET"),
+  refreshSecret: required("REFRESH_SECRET"),
 };
