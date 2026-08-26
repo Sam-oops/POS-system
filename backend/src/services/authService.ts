@@ -3,6 +3,7 @@ import { TenantModel } from "../models/tenant";
 import { UserModel } from "../models/user";
 import bcrypt from "bcryptjs";
 import { env } from "../config/env";
+import { AuthPayload } from "../types/auth";
 
 export async function login(
   tenantSlug: string,
@@ -29,5 +30,35 @@ export async function login(
     env.jwtSecret,
     { expiresIn: "15m" },
   );
-  return accessToken;
+  const refreshToken = jwt.sign(
+    {
+      userId: user._id.toString(),
+      tenantId: user.tenantId.toString(),
+      role: user.role,
+    },
+    env.refreshSecret,
+    { expiresIn: "15d" },
+  );
+  return { accessToken, refreshToken };
+}
+
+export function refreshAccessToken(refreshToken: string) {
+  try {
+    const { userId, tenantId, role } = jwt.verify(
+      refreshToken,
+      env.refreshSecret,
+    ) as AuthPayload;
+    const accessToken = jwt.sign(
+      {
+        userId,
+        tenantId,
+        role,
+      },
+      env.jwtSecret,
+      { expiresIn: "15m" },
+    );
+    return { accessToken };
+  } catch (error) {
+    return null;
+  }
 }

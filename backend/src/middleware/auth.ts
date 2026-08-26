@@ -4,7 +4,8 @@ import { AuthPayload } from "../types/auth";
 import jwt from "jsonwebtoken";
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies.token;
+  const header = req.headers["authorization"];
+  const token = header && header.split(" ")[1];
 
   if (!token) return res.status(401).json({ error: "No token" });
   try {
