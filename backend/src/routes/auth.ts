@@ -21,6 +21,15 @@ router.post("/login", async (req, res) => {
   return res.json({ accessToken });
 });
 
+router.post("/logout", async (req, res) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  })
+  res.json({});
+})
+
 router.post("/refresh", async (req, res) => {
   const refreshToken = req.cookies["refreshToken"];
   const objectToken = refreshAccessToken(refreshToken);
